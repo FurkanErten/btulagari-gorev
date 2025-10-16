@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+/* ---- Lagari renkleri + doku ---- */
+:root {
+  --bg: #101319;
+  --bg-2: #0f1420;
+  --card: rgba(255, 255, 255, 0.05);
+  --stroke: rgba(255, 255, 255, 0.08);
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-2: #60a5fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: radial-gradient(
+      1200px 600px at 20% -10%,
+      rgba(59, 130, 246, 0.15),
+      transparent 60%
+    ),
+    radial-gradient(
+      1200px 600px at 100% 10%,
+      rgba(96, 165, 250, 0.1),
+      transparent 50%
+    ),
+    linear-gradient(180deg, var(--bg-2), var(--bg));
+  color: var(--text);
+  /* iOS çentik alanları */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* --- Koyu tema date/select/input görünümleri --- */
+.input-dark,
+.select-dark,
+.date-dark {
+  @apply w-full rounded-lg border px-3 py-2 outline-none transition;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+.input-dark:focus,
+.select-dark:focus,
+.date-dark:focus {
+  @apply ring-2 ring-blue-500/30 border-blue-500/40;
+}
+
+/* DATE (koyu picker + ikon) */
+.date-dark {
+  appearance: none;
+  color-scheme: dark;
+}
+.date-dark::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.85);
+  cursor: pointer;
+}
+
+/* SELECT (özel chevron, padding) */
+.select-dark {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg width='16' height='16' viewBox='0 0 20 20' fill='white' xmlns='http://www.w3.org/2000/svg'><path d='M5.25 7.5L10 12.25L14.75 7.5' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 1rem;
+  padding-right: 2rem;
+}
+.select-dark option {
+  background-color: #0f1420;
+  color: #e5e7eb;
+}
+
+/* ---- Bileşen yardımcı sınıfları ---- */
+@layer utilities {
+  .card {
+    @apply rounded-2xl border px-4 py-4 md:px-5 md:py-5;
+    border-color: var(--stroke);
+    background: var(--card);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition;
+  }
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700;
+  }
+  .btn-ghost {
+    @apply border border-white/10 hover:bg-white/5;
+  }
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium border;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  .badge-open {
+    @apply bg-blue-500/15 text-blue-300;
+  }
+  .badge-assigned {
+    @apply bg-amber-500/15 text-amber-300;
+  }
+  .badge-done {
+    @apply bg-emerald-500/15 text-emerald-300;
+  }
+
+  .input,
+  .textarea,
+  .select {
+    @apply w-full rounded-xl border px-3 py-2 outline-none transition;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  .input:focus,
+  .textarea:focus,
+  .select:focus {
+    @apply ring-2 ring-blue-500/30 border-blue-500/40;
+  }
+
+  /* Haftalık şerit: mobilde yatay kaydırma + snap */
+  .week-scroll {
+    @apply overflow-x-auto overflow-y-hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .week-scroll > * {
+    scroll-snap-align: start;
+  }
+
+  /* Ay takvimi grid'i mobil/tablet uyumlu yapmak istersen: */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  @media (min-width: 480px) {
+    .cal-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 768px) {
+    .cal-grid {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+  }
+
+  /* mobil buton boyutları */
+  @media (max-width: 420px) {
+    .btn {
+      @apply px-3 py-2;
+    }
+  }
+}
+
+/* İnce scrollbar */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Hafta şeridi animasyonları */
+@keyframes week-slide-left {
+  from {
+    opacity: 0.6;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes week-slide-right {
+  from {
+    opacity: 0.6;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.week-anim-left {
+  animation: week-slide-left 0.5s ease-out;
+}
+.week-anim-right {
+  animation: week-slide-right 0.5s ease-out;
+}
